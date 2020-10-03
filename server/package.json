@@ -1,0 +1,23 @@
+{
+  "name": "server",
+  "version": "2.0.0",
+  "description": "NoSQL version of INMAN Server",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "env-cmd -f ./config/.dev.env nodemon index.js",
+    "start:prod": "env-cmd -f ./config/.prod.env nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.20.0",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "env-cmd": "^10.1.0",
+    "express": "^4.17.1",
+    "jest": "^26.4.2",
+    "mongoose": "^5.10.7",
+    "nodemon": "^2.0.4"
+  }
+}
