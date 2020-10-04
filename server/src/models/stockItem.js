@@ -1,20 +1,21 @@
 const mongoose = require('mongoose');
+
+
 let stockItemSchema = new mongoose.Schema({
     identifiers: {
         model: {
             type: mongoose.ObjectId,
-            ref: 'model'
+            ref: 'Model'
         },
         tags: [String]
     },
-    locationQuantity: [{
-        location: {
-            type: mongoose.ObjectId,
-            ref: 'Location'
-        },
-        quantity: Number,
-    }],
-
+    locationQuantity: [
+        {
+            _id: false,
+            location: { type: mongoose.ObjectId, ref: 'Location' },
+            quantity: Number
+        }
+    ],
     totalQuantity: {
         type: Number,
         default: function () {
@@ -41,7 +42,8 @@ let stockItemSchema = new mongoose.Schema({
                 ref: 'Location'
             },
             quantity: Number,
-            timestamp: Date
+            timestamp: Date,
+            _id: false
         }
     ],
 }, { timestamps: true, versionKey: false })

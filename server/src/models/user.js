@@ -31,15 +31,16 @@ let userSchema = new mongoose.Schema({
     lastLogin: Date,
 
     assignedAssets: [{
+        _id: false,
         asset: {
             type: mongoose.ObjectId,
             ref: 'Asset'
         },
-        timestamp: Date,
-        dueDate: Date
+        timestamp: Date
     }],
 
     issuedStockItems: [{
+        _id: false,
         stockItem: {
             type: mongoose.ObjectId,
             ref: 'StockItem',
@@ -54,6 +55,7 @@ let userSchema = new mongoose.Schema({
 
     transactionHistory: [
         {
+            _id: false,
             targetID: {
                 type: mongoose.ObjectId,
                 required: true

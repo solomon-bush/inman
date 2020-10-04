@@ -1,14 +1,17 @@
 const mongoose = require('mongoose')
 
-const connect = (expServer) => {
+const connect = (isTest) => {
     return new Promise((resolve, reject) => {
         let mongoose_config = {}
         let build = process.env.NODE_ENV
+
         switch (build) {
             case 'dev':
+                let DB_NAME = isTest ? process.env.DB_TEST_NAME : process.env.DB_NAME
+
                 mongoose_config.url = `mongodb://${process.env.DB_HOST}:27017`
                 mongoose_config.options = {
-                    dbName: process.env.DB_NAME,
+                    dbName: DB_NAME,
                     useNewUrlParser: true,
                     useUnifiedTopology: true,
                     useCreateIndex: true,

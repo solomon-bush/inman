@@ -4,8 +4,7 @@ let assetSchema = new mongoose.Schema({
     identifiers: {
         model: {
             type: mongoose.ObjectId,
-            ref: 'Model',
-            required: true
+            ref: 'Model'
         },
         sn: String,
         po: String,
