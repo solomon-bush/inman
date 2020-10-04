@@ -17,7 +17,8 @@ let modelSchema = new mongoose.Schema({
         type: mongoose.ObjectId,
         ref: 'Category',
         required: true
-    }
+    },
+    description: String
 }, { timestamps: true, versionKey: false })
 
 

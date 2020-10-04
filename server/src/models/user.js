@@ -11,6 +11,7 @@ let userSchema = new mongoose.Schema({
     email: String,
     department: String,
     title: String,
+    phone: String,
     pin: String,
 
     pinFails: {
@@ -36,7 +37,12 @@ let userSchema = new mongoose.Schema({
             type: mongoose.ObjectId,
             ref: 'Asset'
         },
-        timestamp: Date
+        timestamp: {
+            type: Date,
+            default: () => {
+                return Date.now()
+            }
+        },
     }],
 
     issuedStockItems: [{
@@ -53,28 +59,34 @@ let userSchema = new mongoose.Schema({
         timestamp: Date
     }],
 
-    transactionHistory: [
-        {
-            _id: false,
-            targetID: {
-                type: mongoose.ObjectId,
-                required: true
-            },
-            targetType: {
-                type: String,
-                enum: ['Asset', 'StockItem'],
-                required: true,
-            },
-            transaction: {
-                type: String,
-                enum: ['Check-In', 'Check-Out']
-            },
-            timestamp: Date
-        }
-    ],
     attachments: [{ type: mongoose.ObjectId, ref: 'Attachment' }]
 
 }, { timestamps: true, versionKey: false })
 
+
+userSchema.methods.assignAsset = function (_id) {
+    return new Promise((resolve, reject) => {
+        for (let i = 0; i < this.assignedAssets.length; i++) {
+            if (String(this.assignedAssets[i].asset) === String(_id)) {
+                this.assignedAssets.splice(i, 1)
+            }
+        }
+        this.assignedAssets.push({ asset: _id })
+        this.save()
+        resolve()
+    })
+}
+
+userSchema.methods.unassignAsset = function (_id) {
+    return new Promise((resolve, reject) => {
+        for (let i = 0; i < this.assignedAssets.length; i++) {
+            if (String(this.assignedAssets[i].asset) === String(_id)) {
+                this.assignedAssets.splice(i, 1)
+            }
+        }
+        this.save()
+        resolve();
+    })
+}
 
 module.exports = mongoose.model('User', userSchema)

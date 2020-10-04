@@ -10,20 +10,45 @@ module.exports.set = (app) => {
     })
 
     app.put(`${url}/:_id/assignee`, (req, res) => {
-        //TODO
-        Asset.findById(req.params._id).then(a => {
-            console.log(a)
-            a.assignee = req.body.user
-            a.save().then(() => {
-                User.findById(req.body.user).then(async u => {
-                    u.assignedAssets.push({ asset: a._id, timestamp: Date.now() })
-                    await u.save()
-                    Asset.findById(req.params._id).populate('assignee').populate('assignee.assignedAssets').then(result => {
-                        res.send(result)
+        Asset.findById(req.params._id)
+            .then(a => {
+                a.updateAssignee(req.body.user)
+                    .then(asset => {
+                        res.send(asset)
+                    }).catch(err => {
+                        res.status(404).send(err)
                     })
-                })
             })
-        })
+            .catch((err) => { res.status(404).send(err) })
+    })
+
+    app.delete(`${url}/:_id/assignee`, (req, res) => {
+        Asset.findById(req.params._id).then(a => {
+            if (a === null) {
+                res.status(404).send('No Asset found')
+            } else {
+                a.removeAssignee().then(asset => {
+                    res.send(asset)
+                }).catch(err => { res.status(404).send(err) })
+            }
+        }).catch(err => { res.status(404).send(err) })
+    })
+
+
+    app.post(`${url}`, (req, res) => {
+        let a = new Asset({ ...req.body })
+        a.save().then((result => { res.send(result) }))
+    })
+
+    app.put(`${url}/:_id`, (req, res) => {
+        Asset.findByIdAndUpdate({ _id: req.params._id }, { ...req.body }, { new: true })
+            .then(result => {
+                res.send(result)
+            })
+    })
+    app.post(`${url}/:_id/attachment`, (req, res) => {
+        //TODO
+        res.send('TODO')
     })
 
 }
