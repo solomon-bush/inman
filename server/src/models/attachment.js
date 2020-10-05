@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const User = require('./User');
+const utils = require('./_utils')
+
 let attachmentSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -20,6 +23,13 @@ let attachmentSchema = new mongoose.Schema({
     notes: String,
 
 }, { timestamps: true, versionKey: false })
+
+
+attachmentSchema.path('owner').validate((value, respond) => {
+    if (value !== null) {
+        return utils.validateRef(value, respond, User);
+    }
+}, 'Invalid Owner (User).');
 
 
 module.exports = mongoose.model('Attachment', attachmentSchema)

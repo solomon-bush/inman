@@ -224,72 +224,56 @@ const testAsset = () => {
             let models = await Model.find()
             let locations = await Location.find()
             let A1 = Asset({
-                identifiers: {
-                    model: models[0]._id,
-                    sn: '1234',
-                    po: 'test',
-                    ticket: 'asdf',
-                    tags: ['macbook', 'air', '2014']
-                },
+                model: models[0]._id,
+                sn: '1234',
+                po: 'test',
+                ticket: 'asdf',
+                tags: ['macbook', 'air', '2014'],
                 origin: locations[3]._id
             })
             let A2 = Asset({
-                identifiers: {
-                    model: models[0]._id,
-                    sn: '1223',
-                    po: 'asdfaa',
-                    ticket: 'asdf1213',
-                    tags: ['macbook', 'air', '2014']
-                },
+                model: models[0]._id,
+                sn: '1223',
+                po: 'asdfaa',
+                ticket: 'asdf1213',
+                tags: ['macbook', 'air', '2014'],
                 origin: locations[3]._id
             })
             let A3 = Asset({
-                identifiers: {
-                    model: models[1]._id,
-                    sn: '0012004',
-                    tags: ['macbook', 'pro', '2016']
-                },
+                model: models[1]._id,
+                sn: '0012004',
+                tags: ['macbook', 'pro', '2016'],
                 origin: locations[3]._id
             })
             let A4 = Asset({
-                identifiers: {
-                    model: models[1]._id,
-                    sn: '000123',
-                    tags: ['macbook', 'pro', '2016']
-                },
+                model: models[1]._id,
+                sn: '000123',
+                tags: ['macbook', 'pro', '2016'],
                 origin: locations[4]._id
             })
             let A5 = Asset({
-                identifiers: {
-                    model: models[1]._id,
-                    sn: '00120076',
-                    tags: ['macbook', 'pro', '2016']
-                },
+                model: models[1]._id,
+                sn: '00120076',
+                tags: ['macbook', 'pro', '2016'],
                 origin: locations[5]._id
             })
 
             let A6 = Asset({
-                identifiers: {
-                    model: models[2]._id,
-                    sn: 'A001556',
-                    tags: ['lcd', 'monitor']
-                },
+                model: models[2]._id,
+                sn: 'A001556',
+                tags: ['lcd', 'monitor'],
                 origin: locations[3]._id
             })
             let A7 = Asset({
-                identifiers: {
-                    model: models[2]._id,
-                    sn: 'A0015163',
-                    tags: ['lcd', 'monitor']
-                },
+                model: models[2]._id,
+                sn: 'A0015163',
+                tags: ['lcd', 'monitor'],
                 origin: locations[3]._id
             })
             let A8 = Asset({
-                identifiers: {
-                    model: models[2]._id,
-                    sn: 'A001522',
-                    tags: ['lcd', 'monitor']
-                },
+                model: models[2]._id,
+                sn: 'A001522',
+                tags: ['lcd', 'monitor'],
                 origin: locations[3]._id
             })
 
@@ -320,10 +304,8 @@ const testStockItem = () => {
             let models = await Model.find()
             let locations = await Location.find()
             let S1 = StockItem({
-                identifiers: {
-                    model: models[3]._id,
-                    tags: ['Standard', 'Cat5', 'Insulated', 'Green']
-                },
+                model: models[3]._id,
+                tags: ['Standard', 'Cat5', 'Insulated', 'Green'],
                 locationQuantity: [
                     { location: locations[3]._id, quantity: 10 },
                     { location: locations[4]._id, quantity: 44 },
@@ -331,10 +313,8 @@ const testStockItem = () => {
                 ]
             })
             let S2 = StockItem({
-                identifiers: {
-                    model: models[4]._id,
-                    tags: ['Laser', 'Ergonomic', 'Gesture', 'Windows', 'Mac']
-                },
+                model: models[4]._id,
+                tags: ['Laser', 'Ergonomic', 'Gesture', 'Windows', 'Mac'],
                 locationQuantity: [
                     { location: locations[3]._id, quantity: 10 },
                     { location: locations[4]._id, quantity: 44 },
@@ -342,10 +322,8 @@ const testStockItem = () => {
                 ]
             })
             let S3 = StockItem({
-                identifiers: {
-                    model: models[5]._id,
-                    tags: ['Standard', 'Windows']
-                },
+                model: models[5]._id,
+                tags: ['Standard', 'Windows'],
                 locationQuantity: [
                     { location: locations[3]._id, quantity: 8 },
                     { location: locations[4]._id, quantity: 13 },

@@ -1,10 +1,14 @@
 const mongoose = require('mongoose');
 const User = require('./User');
+const Model = require('./Model')
+const Location = require('./Location')
+const utils = require('./_utils')
+
 let assetSchema = new mongoose.Schema({
     model: {
         type: mongoose.ObjectId,
         ref: 'Model',
-        required: true
+        required: true,
     },
     sn: String,
     po: String,
@@ -15,7 +19,7 @@ let assetSchema = new mongoose.Schema({
     notes: String,
     origin: {
         type: mongoose.ObjectId,
-        ref: 'Location',
+        ref: 'Location'
     },
     assignee: {
         type: mongoose.ObjectId,
@@ -105,6 +109,24 @@ assetSchema.methods.removeAssignee = function () {
         }
     })
 }
+
+
+
+//Validators
+assetSchema.path('model').validate((value, respond) => {
+    return utils.validateRef(value, respond, Model);
+}, 'Invalid Model.');
+
+assetSchema.path('origin').validate((value, respond) => {
+    return utils.validateRef(value, respond, Location);
+}, 'Invalid Origin (Location).');
+
+assetSchema.path('assignee').validate((value, respond) => {
+    if (value !== null) {
+        return utils.validateRef(value, respond, User);
+    }
+}, 'Invalid Assignee (User).');
+
 
 
 
