@@ -1,19 +1,18 @@
 const mongoose = require('mongoose');
 const User = require('./User');
 let assetSchema = new mongoose.Schema({
-
-    identifiers: {
-        model: {
-            type: mongoose.ObjectId,
-            ref: 'Model',
-            required: true
-        },
-        sn: String,
-        po: String,
-        ticket: String,
-        assetTag: String,
-        tags: [String]
+    model: {
+        type: mongoose.ObjectId,
+        ref: 'Model',
+        required: true
     },
+    sn: String,
+    po: String,
+    ticket: String,
+    assetTag: String,
+    tags: [String],
+    customAttributes: Object,
+    notes: String,
     origin: {
         type: mongoose.ObjectId,
         ref: 'Location',
