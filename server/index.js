@@ -7,16 +7,16 @@ const cors = require('cors');
 const db = require('./src/db');
 const routes = require('./src/api/routes')
 
-//MODELS
-//Load Models
-const Location = require('./src/models/Location');
-const Category = require('./src/models/Category');
-const Model = require('./src/models/Model');
-const Manufacturer = require('./src/models/Manufacturer');
-const User = require('./src/models/User');
-const Asset = require('./src/models/Asset');
-const StockItem = require('./src/models/StockItem');
-const Attachment = require('./src/models/Attachment');
+// //MODELS
+// //Load Models
+// const Location = require('./src/models/Location');
+// const Category = require('./src/models/Category');
+// const Model = require('./src/models/Model');
+// const Manufacturer = require('./src/models/Manufacturer');
+// const User = require('./src/models/User');
+// const Asset = require('./src/models/Asset');
+// const StockItem = require('./src/models/StockItem');
+// const Attachment = require('./src/models/Attachment');
 
 const app = express()
 app.use(bodyParser.urlencoded())
