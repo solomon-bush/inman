@@ -30,7 +30,7 @@ module.exports.set = (app) => {
     app.put(`${url}/:_id`, (req, res) => {
         Manufacturer.findById(req.params._id).then(m => {
             if (m === null) {
-
+                res.send('Invalid ID')
             } else {
                 Manufacturer.findByIdAndUpdate({ _id: req.params._id }, { ...req.body }, { new: true })
                     .then(result => {
