@@ -5,7 +5,7 @@ module.exports.set = (app) => {
     let url = '/api/asset'
     // Get all assets
     app.get(`${url}`, (req, res) => {
-        Asset.find().populate('identifiers.model')
+        Asset.find().populate('model').populate('origin')
             .then(assets => res.send(assets))
     })
     // Assign Asset to User
@@ -65,6 +65,14 @@ module.exports.set = (app) => {
     app.post(`${url}/:_id/attachment`, (req, res) => {
         //TODO
         res.send('TODO')
+    })
+
+
+    // Get Similar Assets
+    app.get(`${url}/:_id/similar`, (req, res) => {
+        Asset.findById(req.params._id).then(a => {
+            Asset.find({ model: a['model'] }).then(result => res.send(result))
+        })
     })
 
 }
