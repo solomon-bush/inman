@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Model = require('./Model')
+const Location = require('./Location')
+const User = require('./User')
 const utils = require('./_utils')
 
 
@@ -16,16 +18,13 @@ let stockItemSchema = new mongoose.Schema({
             quantity: Number
         }
     ],
-    totalQuantity: {
-        type: Number,
-        default: function () {
-            let total = 0
-            this.locationQuantity.forEach(l => {
-                total += l.quantity
-            })
-            return total
+    userQuantity: [
+        {
+            _id: false,
+            user: { type: mongoose.ObjectId, ref: 'User' },
+            quantity: Number
         }
-    },
+    ]
 
     // transactionHistory: [
     //     {
@@ -52,6 +51,16 @@ let stockItemSchema = new mongoose.Schema({
 stockItemSchema.path('model').validate((value, respond) => {
     return utils.validateRef(value, respond, Model);
 }, 'Invalid Model.');
+
+
+stockItemSchema.path('locationQuantity.location').validate((value, respond) => {
+    return utils.validateRef(value, respond, Location);
+}, 'Invalid Location ID.');
+
+stockItemSchema.path('userQuantity.user').validate((value, respond) => {
+    return utils.validateRef(value, respond, User);
+}, 'Invalid User ID.');
+
 
 
 module.exports = mongoose.model('StockItem', stockItemSchema)
