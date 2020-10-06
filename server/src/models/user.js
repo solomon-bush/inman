@@ -56,7 +56,12 @@ let userSchema = new mongoose.Schema({
             type: Number,
             required: true
         },
-        timestamp: Date
+        timestamp: {
+            type: Date,
+            default: () => {
+                return Date.now()
+            }
+        },
     }],
 
     attachments: [{ type: mongoose.ObjectId, ref: 'Attachment' }]
@@ -71,6 +76,7 @@ userSchema.methods.assignAsset = function (_id) {
                 this.assignedAssets.splice(i, 1)
             }
         }
+        //TODO test -> This doesn't look right
         this.assignedAssets.push({ asset: _id })
         this.save()
         resolve()
@@ -86,6 +92,26 @@ userSchema.methods.unassignAsset = function (_id) {
         }
         this.save()
         resolve();
+    })
+}
+userSchema.methods.issueStockItem = function (_id, quantity) {
+    return new Promise((resolve, reject) => {
+        let updated = false
+        for (let i = 0; i < this.issuedStockItems.length; i++) {
+            if (String(this.issuedStockItems[i].stockItem) === String(_id)) {
+                this.issuedStockItems[i].quantity = Number(this.issuedStockItems[i].quantity) + Number(quantity)
+                updated = true
+            }
+        }
+        if (!updated) {
+            if (this.issuedStockItems === undefined) {
+                this.issuedStockItems = [{ stockItem: _id, quantity: quantity }]
+            } else {
+                this.issuedStockItems.push({ stockItem: _id, quantity: quantity })
+            }
+        }
+        this.save()
+        resolve()
     })
 }
 
