@@ -15,7 +15,7 @@ db.connect().then(async () => {
     await testModel()
     await testAsset()
     await testStockItem()
-    // await testUser()
+    await testUser()
 })
 
 
@@ -30,6 +30,7 @@ const testLocations = () => {
         }).then(async () => {
             //Offices
             let L1 = new Location({
+                _id: '5f7ab3980ff962313cbc3a31',
                 state: 'GA',
                 site: 'Atlanta',
                 bldg: '430N',
@@ -37,6 +38,7 @@ const testLocations = () => {
                 isStorage: false
             })
             let L2 = new Location({
+                _id: '5f7ab3980ff962313cbc3a32',
                 state: 'GA',
                 site: 'Atlanta',
                 bldg: '430N',
@@ -44,6 +46,7 @@ const testLocations = () => {
                 isStorage: false
             })
             let L3 = new Location({
+                _id: '5f7ab3980ff962313cbc3a33',
                 state: 'GA',
                 site: 'Atlanta',
                 bldg: 'CRB',
@@ -52,6 +55,7 @@ const testLocations = () => {
             })
             //Storage Rooms
             let L4 = new Location({
+                _id: '5f7ab3980ff962313cbc3a34',
                 state: 'GA',
                 site: 'Atlanta',
                 bldg: 'WF',
@@ -59,6 +63,7 @@ const testLocations = () => {
                 isStorage: true
             })
             let L5 = new Location({
+                _id: '5f7ab3980ff962313cbc3a35',
                 state: 'GA',
                 site: 'Atlanta',
                 bldg: 'CRB',
@@ -66,6 +71,7 @@ const testLocations = () => {
                 isStorage: true
             })
             let L6 = new Location({
+                _id: '5f7ab3980ff962313cbc3a36',
                 state: 'CA',
                 site: 'San Diego',
                 bldg: 'SDFO',
@@ -98,11 +104,11 @@ const testCategory = () => {
                 category.remove()
             })
         }).then(async () => {
-            let C1 = Category({ name: 'laptops' });
-            let C2 = Category({ name: 'cables' })
-            let C3 = Category({ name: 'monitors' })
-            let C4 = Category({ name: 'printers' })
-            let C5 = Category({ name: 'mice' })
+            let C1 = Category({ _id: '5f7ab3980ff962313cbc3a37', name: 'laptops' });
+            let C2 = Category({ _id: '5f7ab3980ff962313cbc3a38', name: 'cables' })
+            let C3 = Category({ _id: '5f7ab3980ff962313cbc3a39', name: 'monitors' })
+            let C4 = Category({ _id: '5f7ab3980ff962313cbc3a3a', name: 'printers' })
+            let C5 = Category({ _id: '5f7ab3980ff962313cbc3a3b', name: 'mice' })
 
             await C1.save()
             await C2.save()
@@ -126,12 +132,12 @@ const testManufacturer = () => {
                 manufacturer.remove()
             })
         }).then(async () => {
-            let M1 = Manufacturer({ name: 'apple' });
-            let M2 = Manufacturer({ name: 'logitech' })
-            let M3 = Manufacturer({ name: 'microsoft' });
-            let M4 = Manufacturer({ name: 'samsung' })
-            let M5 = Manufacturer({ name: 'hp' });
-            let M6 = Manufacturer({ name: 'dell' });
+            let M1 = Manufacturer({ _id: '5f7ab3980ff962313cbc3a3c', name: 'apple' });
+            let M2 = Manufacturer({ _id: '5f7ab3980ff962313cbc3a3d', name: 'logitech' })
+            let M3 = Manufacturer({ _id: '5f7ab3980ff962313cbc3a3e', name: 'microsoft' });
+            let M4 = Manufacturer({ _id: '5f7ab3980ff962313cbc3a3f', name: 'samsung' })
+            let M5 = Manufacturer({ _id: '5f7ab3980ff962313cbc3a30', name: 'hp' });
+            let M6 = Manufacturer({ _id: '5f7ab3980ff962313cbc3a31', name: 'dell' });
             await M1.save()
             await M2.save()
             await M3.save()
@@ -157,6 +163,7 @@ const testModel = () => {
             let cat = await Category.find()
             console.log(man)
             let M1 = Model({
+                _id: '5f7ab3980ff962313cbc3a42',
                 name: 'A1170',
                 isTracked: true,
                 description: 'Macbook Air',
@@ -164,6 +171,7 @@ const testModel = () => {
                 category: cat[0]._id
             })
             let M2 = Model({
+                _id: '5f7ab3980ff962313cbc3a43',
                 name: 'A2230',
                 isTracked: true,
                 manufacturer: man[0]._id,
@@ -171,6 +179,7 @@ const testModel = () => {
                 category: cat[0]._id
             })
             let M3 = Model({
+                _id: '5f7ab3980ff962313cbc3a44',
                 name: 'U245',
                 isTracked: true,
                 description: '32in LCD Monitor',
@@ -178,18 +187,21 @@ const testModel = () => {
                 category: cat[2]._id
             })
             let M4 = Model({
+                _id: '5f7ab3980ff962313cbc3a45',
                 name: '5ft Green Ethernet',
                 isTracked: false,
                 manufacturer: man[1]._id,
                 category: cat[1]._id
             })
             let M5 = Model({
+                _id: '5f7ab3980ff962313cbc3a46',
                 name: 'MX Master 2',
                 isTracked: false,
                 manufacturer: man[1]._id,
                 category: cat[4]._id
             })
             let M6 = Model({
+                _id: '5f7ab3980ff962313cbc3a47',
                 name: 'M315',
                 isTracked: false,
                 manufacturer: man[1]._id,
@@ -224,6 +236,7 @@ const testAsset = () => {
             let models = await Model.find()
             let locations = await Location.find()
             let A1 = Asset({
+                _id: '5f7ab3980ff962313cbc3a48',
                 model: models[0]._id,
                 sn: '1234',
                 po: 'test',
@@ -232,6 +245,7 @@ const testAsset = () => {
                 origin: locations[3]._id
             })
             let A2 = Asset({
+                _id: '5f7ab3980ff962313cbc3a49',
                 model: models[0]._id,
                 sn: '1223',
                 po: 'asdfaa',
@@ -240,18 +254,21 @@ const testAsset = () => {
                 origin: locations[3]._id
             })
             let A3 = Asset({
+                _id: '5f7ab3980ff962313cbc3a4a',
                 model: models[1]._id,
                 sn: '0012004',
                 tags: ['macbook', 'pro', '2016'],
                 origin: locations[3]._id
             })
             let A4 = Asset({
+                _id: '5f7ab3980ff962313cbc3a4b',
                 model: models[1]._id,
                 sn: '000123',
                 tags: ['macbook', 'pro', '2016'],
                 origin: locations[4]._id
             })
             let A5 = Asset({
+                _id: '5f7ab3980ff962313cbc3a4c',
                 model: models[1]._id,
                 sn: '00120076',
                 tags: ['macbook', 'pro', '2016'],
@@ -259,18 +276,21 @@ const testAsset = () => {
             })
 
             let A6 = Asset({
+                _id: '5f7ab3980ff962313cbc3a4d',
                 model: models[2]._id,
                 sn: 'A001556',
                 tags: ['lcd', 'monitor'],
                 origin: locations[3]._id
             })
             let A7 = Asset({
+                _id: '5f7ab3980ff962313cbc3a4e',
                 model: models[2]._id,
                 sn: 'A0015163',
                 tags: ['lcd', 'monitor'],
                 origin: locations[3]._id
             })
             let A8 = Asset({
+                _id: '5f7ab3980ff962313cbc3a4f',
                 model: models[2]._id,
                 sn: 'A001522',
                 tags: ['lcd', 'monitor'],
@@ -304,6 +324,7 @@ const testStockItem = () => {
             let models = await Model.find()
             let locations = await Location.find()
             let S1 = StockItem({
+                _id: '5f7bbc6219b93435c0a3bd57',
                 model: models[3]._id,
                 tags: ['Standard', 'Cat5', 'Insulated', 'Green'],
                 locationQuantity: [
@@ -313,6 +334,8 @@ const testStockItem = () => {
                 ]
             })
             let S2 = StockItem({
+
+                _id: "5f7bbc6219b93435c0a3bd58",
                 model: models[4]._id,
                 tags: ['Laser', 'Ergonomic', 'Gesture', 'Windows', 'Mac'],
                 locationQuantity: [
@@ -322,6 +345,7 @@ const testStockItem = () => {
                 ]
             })
             let S3 = StockItem({
+                _id: "5f7bbc6219b93435c0a3bd59",
                 model: models[5]._id,
                 tags: ['Standard', 'Windows'],
                 locationQuantity: [
@@ -352,6 +376,7 @@ const testUser = () => {
         }).then(async () => {
             let locations = await Location.find()
             let U1 = new User({
+                _id: '5f79f9f7579f5938683f1f9a',
                 gtid: '902704894',
                 userName: 'mbush31',
                 firstName: 'Solomon',
@@ -363,6 +388,7 @@ const testUser = () => {
                 location: locations[0]._id,
             })
             let U2 = new User({
+                _id: '5f79f9f7579f5938683f1f9b',
                 gtid: '903255330',
                 userName: 'achew7',
                 firstName: 'Andrew',
@@ -374,6 +400,7 @@ const testUser = () => {
                 location: locations[1]._id,
             })
             let U3 = new User({
+                _id: '5f79f9f7579f5938683f1f9c',
                 gtid: '903259276',
                 userName: 'jwilson369',
                 firstName: 'Jarred',
