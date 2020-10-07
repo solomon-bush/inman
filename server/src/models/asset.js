@@ -33,7 +33,7 @@ let assetSchema = new mongoose.Schema({
             ref: 'User',
         },
         timestamp: {
-            type: Date,
+            type: Number,
             default: () => {
                 return Date.now()
             }

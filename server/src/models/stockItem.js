@@ -15,23 +15,21 @@ let stockItemSchema = new mongoose.Schema({
         {
             _id: false,
             location: { type: mongoose.ObjectId, ref: 'Location' },
-            quantity: Number
+            quantity: Number,
+            timestamp: { type: Number, default: () => { return Date.now() } },
+            history: [mongoose.Schema.Types.Mixed]
         }
     ],
+
     userQuantity: [
         {
             _id: false,
             user: { type: mongoose.ObjectId, ref: 'User' },
-            quantity: Number
-        }
-    ],
-    surplusHistory: [
-        {
-            _id: false,
             quantity: Number,
-            timestamp: { type: Date, default: () => { return Date.now() } }
+            timestamp: { type: Number, default: () => { return Date.now() } },
+            history: [mongoose.Schema.Types.Mixed]
         }
-    ],
+    ]
 
 }, { timestamps: true, versionKey: false })
 
@@ -39,15 +37,6 @@ let stockItemSchema = new mongoose.Schema({
 stockItemSchema.path('model').validate((value, respond) => {
     return utils.validateRef(value, respond, Model);
 }, 'Invalid Model.');
-
-
-stockItemSchema.path('locationQuantity.location').validate((value, respond) => {
-    return utils.validateRef(value, respond, Location);
-}, 'Invalid Location ID.');
-
-stockItemSchema.path('userQuantity.user').validate((value, respond) => {
-    return utils.validateRef(value, respond, User);
-}, 'Invalid User ID.');
 
 //Methods
 
@@ -97,6 +86,8 @@ stockItemSchema.methods.incrementLocationQuantity = function (_id, quantity) {
             this.locationQuantity.map((v, i) => {
                 if (String(v.location) === String(_id)) {
                     this.locationQuantity[i].quantity = Number(v.quantity) + Number(quantity)
+                    this.locationQuantity[i].history.push({ quantity: v.quantity, timestamp: v.timestamp })
+                    this.locationQuantity[i].timestamp = Date.now()
                     resolve(this);
                 }
             })
@@ -114,6 +105,8 @@ stockItemSchema.methods.decrementLocationQuantity = function (_id, quantity) {
                     if (!(Number(v.quantity) >= Number(quantity))) { reject('Insufficient Quantity') }
                     else {
                         this.locationQuantity[i].quantity = Number(v.quantity) - Number(quantity)
+                        this.locationQuantity[i].history.push({ quantity: v.quantity, timestamp: v.timestamp })
+                        this.locationQuantity[i].timestamp = Date.now()
                         resolve(this);
                     }
                 }
@@ -151,6 +144,8 @@ stockItemSchema.methods.incrementUserQuantity = function (_id, quantity) {
             this.userQuantity.map((v, i) => {
                 if (String(v.user) === String(_id)) {
                     this.userQuantity[i].quantity = Number(v.quantity) + Number(quantity)
+                    this.userQuantity[i].history.push({ quantity: v.quantity, timestamp: v.timestamp })
+                    this.userQuantity[i].timestamp = Date.now()
                     resolve(this);
                 }
             })
@@ -168,6 +163,8 @@ stockItemSchema.methods.decrementUserQuantity = function (_id, quantity) {
                     if (!(Number(v.quantity) >= Number(quantity))) { reject('Insufficient Quantity') }
                     else {
                         this.userQuantity[i].quantity = Number(v.quantity) - Number(quantity)
+                        this.userQuantity[i].history.push({ quantity: v.quantity, timestamp: v.timestamp })
+                        this.userQuantity[i].timestamp = Date.now()
                         resolve(this);
                     }
 

@@ -7,21 +7,32 @@ module.exports.set = (app) => {
     let url = '/api/user'
     // Get All
     app.get(`${url}`, (req, res) => {
-        User.find().then(results => { res.send(results) })
+        User.find()
+            .select(['-history', '-attachments']).then(results => { res.send(results) })
     })
     // Get Details
     app.get(`${url}/:_id`,
         [param('_id').isMongoId()],
         (req, res) => {
             User.findById(req.params._id)
-                .populate(['location', 'assignedAssets.asset', 'issuedStockItems.stockItem'])
+                .select(['-history', '-attachments'])
+                // .populate(['location', 'assignedAssets.asset', 'issuedStockItems.stockItem'])
                 .then(results => { res.send(results) })
         })
     // Get History
-    app.get(`${url}/:_id/history`, (req, res) => {
-        // User.find().then(results => { res.send(results) })
-        // TODO
-    })
+    app.get(`${url}/:_id/history`,
+        [param('_id').isMongoId()],
+        (req, res) => {
+            User.findById(req.params._id)
+                .then(results => { res.send(results.history) })
+        })
+    // Get Attachments
+    app.get(`${url}/:_id/attachments`,
+        [param('_id').isMongoId()],
+        (req, res) => {
+            User.findById(req.params._id)
+                .then(results => { res.send(results.attachments) })
+        })
     // Update Location 
     app.put(`${url}/:_id/location`,
         [

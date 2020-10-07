@@ -80,6 +80,7 @@ module.exports.set = (app) => {
                     s.addUserQuantity(u._id, req.body.quantity).then(result => {
                         result.decrementLocationQuantity(req.body.location, req.body.quantity)
                             .then(async finalResult => {
+                                u.issueStockItem(finalResult._id, req.body.quantity)
                                 return res.send(await finalResult.save())
                             }).catch(err => { return res.status(404).send(err) })
                     }).catch(err => { return res.status(404).send(err) })
