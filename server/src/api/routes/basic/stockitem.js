@@ -1,15 +1,7 @@
 const StockItem = require('../../../models/StockItem')
 const User = require('../../../models/User')
 const { body, validationResult, param } = require('express-validator')
-const { isValidObjectId } = require('mongoose')
 
-
-/*
-    TODO:
-    - Finish Generic routes
-    - Add logic to assign stockItem quantities to users
-    - Add logic to unassign/return stockItem quantities to users
-*/
 module.exports.set = (app) => {
 
     let url = '/api/stockitem'
@@ -21,9 +13,10 @@ module.exports.set = (app) => {
     // Get Details
 
     app.get(`${url}/:_id`, (req, res) => {
-        StockItem.findById(req.params._id).populate(['model']).then(results => {
-            res.send(results)
-        })
+        StockItem.findById(req.params._id).populate(['model', 'locationQuantity.location', 'userQuantity.user'])
+            .then(results => {
+                res.send(results)
+            })
     })
 
     // Get Locations
@@ -75,10 +68,6 @@ module.exports.set = (app) => {
         body(['user', 'location']).isMongoId(),
         body('quantity').isInt({ gt: 0 })
     ], (req, res) => {
-        //1. Check User is Valid User
-        //2. Check Location Has Valid Quantity
-        //3. Add Item to User Doc
-        //4. Decrement total for location
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
@@ -87,53 +76,106 @@ module.exports.set = (app) => {
             if (u === null) { return res.status(400).send('Invalid User ID ') }
 
             StockItem.findById(req.params._id).then(s => {
-                let isValidLocation = false;
-                for (let i = 0; i < s.locationQuantity.length; i++) {
-
-                    if (String(s.locationQuantity[i].location) === String(req.body.location)) {
-
-                        isValidLocation = true
-
-                        if (s.locationQuantity[i].quantity >= req.body.quantity) {
-
-                            let userHasQuantity = false
-                            for (let j = 0; j < s.userQuantity.length; j++) {
-
-                                if (String(s.userQuantity[j].user) === String(u._id)) {
-
-                                    userHasQuantity = true;
-                                    s.userQuantity[j].quantity = Number(s.userQuantity[j].quantity) + Number(req.body.quantity)
-                                }
-                            }
-
-                            if (!userHasQuantity) {
-                                s.userQuantity.push({ user: req.body.user, quantity: req.body.quantity })
-                            }
-                            s.locationQuantity[i].quantity -= req.body.quantity
-                            u.issueStockItem(req.params._id, req.body.quantity).then(() => {
-                                s.save().then(result => {
-                                    return res.send(result)
-                                }).catch(err => { return res.send(err) })
-                            })
-                        } else {
-                            return res.status(404).send('Not enough of this Stock Item at this location')
-                        }
-                    }
+                if (!s.userQuantityExists(u._id)) {
+                    s.addUserQuantity(u._id, req.body.quantity).then(result => {
+                        result.decrementLocationQuantity(req.body.location, req.body.quantity)
+                            .then(async finalResult => {
+                                return res.send(await finalResult.save())
+                            }).catch(err => { return res.status(404).send(err) })
+                    }).catch(err => { return res.status(404).send(err) })
+                } else {
+                    s.incrementUserQuantity(u._id, req.body.quantity).then(result => {
+                        result.decrementLocationQuantity(req.body.location, req.body.quantity)
+                            .then(async finalResult => {
+                                u.issueStockItem(finalResult._id, req.body.quantity)
+                                return res.send(await finalResult.save())
+                            }).catch(err => { return res.status(404).send(err) })
+                    }).catch(err => { return res.status(404).send(err) })
                 }
-                if (!isValidLocation) {
-                    return res.status(404).send('This Stock item is not stored at this location')
-                }
-            })
-
-        })
+            }).catch(err => { return res.status(404).send(err) })
+        }).catch(err => { return res.status(404).send(err) })
     })
 
     // Return Stock Item from User
-    app.post(`${url}/:_id/return`, (req, res) => {
-
+    app.post(`${url}/:_id/return`, [
+        param('_id').isMongoId(),
+        body(['user', 'location']).isMongoId(),
+        body('quantity').isInt({ gt: 0 })
+    ], (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        User.findById(req.body.user).then((u) => {
+            if (u === null) { return res.status(400).send('Invalid User ID ') }
+            StockItem.findById(req.params._id).then(async s => {
+                s.decrementUserQuantity(req.body.user, req.body.quantity).then(result1 => {
+                    result1.incrementLocationQuantity(req.body.location, req.body.quantity)
+                        .then(async finalResult => {
+                            u.returnStockItem(finalResult._id, req.body.quantity)
+                            return res.send(await finalResult.save())
+                        }).catch(err => { return res.status(404).send(err) })
+                }).catch(err => { return res.status(404).send(err) })
+            })
+        })
     })
 
     // Add New location and quantity
-    // app.post(`${url}/:_id)`)
+    app.post(`${url}/:_id`, [
+        param('_id').isMongoId(),
+        body('location').isMongoId(),
+        body('quantity').isInt({ gt: -1 })
+    ], (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        StockItem.findById(req.params._id).then(async s => {
+            s.addLocationQuantity(req.body.location, req.body.quantity).then(async updated_StockItem => {
+                let result = await updated_StockItem.save()
+                res.send(result)
+            }).catch(err => { res.status(404).send(err) })
+        })
+    })
 
 }
+
+// s.addLocationQuantity(req.body.location, req.body.quantity).then(async updated_StockItem => {
+//     let result = await updated_StockItem.save()
+//     res.send(result)
+// }).catch(err => { res.status(404).send(err) })
+
+// s.removeLocationQuantity(req.body.location).then(async updated_StockItem => {
+//     let result = await updated_StockItem.save()
+//     res.send(result)
+// }).catch(err => { res.status(404).send(err) })
+
+// s.incrementLocationQuantity(req.body.location, req.body.quantity).then(async updated_StockItem => {
+//     let result = await updated_StockItem.save()
+//     res.send(result)
+// }).catch(err => { res.status(404).send(err) })
+
+// s.decrementLocationQuantity(req.body.location, req.body.quantity).then(async updated_StockItem => {
+//     let result = await updated_StockItem.save()
+//     res.send(result)
+// }).catch(err => { res.status(404).send(err) })
+
+// s.addUserQuantity(req.body.user, req.body.quantity).then(async updated_StockItem => {
+//     let result = await updated_StockItem.save()
+//     res.send(result)
+// }).catch(err => { res.status(404).send(err) })
+
+// s.removeUserQuantity(req.body.user, req.body.quantity).then(async updated_StockItem => {
+//     let result = await updated_StockItem.save()
+//     res.send(result)
+// }).catch(err => { res.status(404).send(err) })
+
+// s.incrementUserQuantity(req.body.user, req.body.quantity).then(async updated_StockItem => {
+//     let result = await updated_StockItem.save()
+//     res.send(result)
+// }).catch(err => { res.status(404).send(err) })
+
+// s.decrementUserQuantity(req.body.user, req.body.quantity).then(async updated_StockItem => {
+//     let result = await updated_StockItem.save()
+//     res.send(result)
+// }).catch(err => { res.status(404).send(err) })
