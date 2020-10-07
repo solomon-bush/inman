@@ -104,6 +104,7 @@ stockItemSchema.methods.incrementLocationQuantity = function (_id, quantity) {
     })
 
 }
+
 stockItemSchema.methods.decrementLocationQuantity = function (_id, quantity) {
     return new Promise((resolve, reject) => {
         if (!this.locationQuantityExists(_id)) { reject('Invalid Location') }
