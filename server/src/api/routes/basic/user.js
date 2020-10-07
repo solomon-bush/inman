@@ -1,27 +1,46 @@
 const User = require('../../../models/User')
+const Location = require('../../../models/Location')
+const { body, validationResult, param } = require('express-validator')
 
 module.exports.set = (app) => {
 
     let url = '/api/user'
-    // TODO
     // Get All
     app.get(`${url}`, (req, res) => {
         User.find().then(results => { res.send(results) })
     })
-
-
     // Get Details
-
-    // Get Assets
-
-    // Get Stock Items
-
-    // Get Attachments
-
+    app.get(`${url}/:_id`,
+        [param('_id').isMongoId()],
+        (req, res) => {
+            User.findById(req.params._id)
+                .populate(['location', 'assignedAssets.asset', 'issuedStockItems.stockItem'])
+                .then(results => { res.send(results) })
+        })
     // Get History
-
-    // Create New 
-
-    // Update Existing 
-
+    app.get(`${url}/:_id/history`, (req, res) => {
+        // User.find().then(results => { res.send(results) })
+        // TODO
+    })
+    // Update Location 
+    app.put(`${url}/:_id/location`,
+        [
+            param('_id').isMongoId(),
+            body('location').isMongoId()
+        ],
+        (req, res) => {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+            Location.findById(req.body.location).then(l => {
+                if (l.isStorage !== false) {
+                    return res.status(400).send('A user location must not be a storage location ')
+                } else {
+                    User.findByIdAndUpdate({ _id: req.params._id }, { location: req.body.location }, { new: true, runValidators: true }).then(u => {
+                        res.send(u)
+                    }).catch(err => { res.status(404).send(err) })
+                }
+            })
+        })
 }

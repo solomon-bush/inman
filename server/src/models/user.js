@@ -1,4 +1,8 @@
 const mongoose = require('mongoose');
+const StockItem = require('./StockItem');
+const Asset = require('./Asset')
+const Location = require('./Location')
+const utils = require('./_utils')
 
 let userSchema = new mongoose.Schema({
     gtid: String,
@@ -12,8 +16,6 @@ let userSchema = new mongoose.Schema({
     pin: String,
 
     pinFails: { type: String, default: 0 },
-
-    isRemote: { type: Boolean, default: false },
 
     location: { type: mongoose.ObjectId, ref: 'Location' },
 
@@ -35,6 +37,12 @@ let userSchema = new mongoose.Schema({
     attachments: [{ type: mongoose.ObjectId, ref: 'Attachment' }]
 
 }, { timestamps: true, versionKey: false })
+
+//Validators
+
+userSchema.path('location').validate((value, respond) => {
+    return utils.validateRef(value, respond, Location);
+}, 'Invalid Location ID.');
 
 
 
